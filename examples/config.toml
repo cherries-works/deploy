@@ -1,0 +1,6 @@
+repo = https://github.com/cherries-works/test
+branch = main
+build = chmod +x build.sh && ./build.sh
+run = cd build && python3 -m http.server 8080
+wait = 10 seconds
+head = 9a3081e478ca3965e7121aedfa4d94765d9df2ac

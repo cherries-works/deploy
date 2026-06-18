@@ -1,0 +1,7 @@
+v0.1.0 (18th June 2026)
+- Config file parsing
+- Auto build & run
+- Rollback
+- Detect failure
+- Hash tracking
+- Skipping failed commits
