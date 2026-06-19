@@ -6,6 +6,8 @@ Deploy deploys anything you want it to within seconds, has automatic rollbacks
 for worse-case scenarios. Configure a simple config.toml file, in human-readable
 form, and run ./deploy.
 
+![Deploy Terminal](./assets/terminal.png)
+
 ## Features
 
 * Deployment
