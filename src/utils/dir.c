@@ -29,13 +29,13 @@ void cleanDir(char *path) {
             cleanDir(newPath);
             continue;
         } else if(entry->d_type == DT_REG) {
-            int r = remove(newPath);
+            remove(newPath);
             continue;
         }
     }
 
     closedir(dir);
-    int r = rmdir(path);
+    rmdir(path);
 
     return;
 }

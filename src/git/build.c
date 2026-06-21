@@ -28,7 +28,7 @@ void build(struct Deploy d) {
         d.build
     );
 
-    int result = system(buffer);
+    system(buffer);
     printf("✓ Build completed\n");
     return;
 }

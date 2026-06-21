@@ -52,7 +52,7 @@ void clone(struct Deploy d) {
         d.branch,
         d.repo
     );
-    int result = system(buffer);
+    system(buffer);
 
     sprintf(
         buffer,
@@ -71,7 +71,7 @@ void clone(struct Deploy d) {
         d.head
     );
 
-    result = system(buffer);
+    system(buffer);
     printf("✓ Repository cloned\n");
     return;
 }
