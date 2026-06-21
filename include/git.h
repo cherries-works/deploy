@@ -3,7 +3,7 @@
 
 #include "config.h"
 
-extern void clone(struct Deploy d);
-extern void build(struct Deploy d);
+extern void clone(Deploy d);
+extern void build(Deploy d);
 
 #endif

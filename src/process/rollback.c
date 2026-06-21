@@ -9,7 +9,7 @@
 #include "config.h"
 #include "process.h"
 
-pid_t rollback(struct Deploy *d, char *hash) {
+pid_t rollback(Deploy *d, char *hash) {
     strcpy(d->failedHead, d->head);
     strcpy(d->head, hash);
 

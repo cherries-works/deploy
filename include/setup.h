@@ -4,8 +4,8 @@
 #include "config.h"
 
 extern void setup();
-extern void setupDeploy(struct Deploy *d);
-extern void setupPath(struct Deploy d, char *buffer);
-extern void setupPathHash(struct Deploy d, char *hash, char *buffer);
+extern void setupDeploy(Deploy *d);
+extern void setupPath(Deploy d, char *buffer);
+extern void setupPathHash(Deploy d, char *hash, char *buffer);
 
 #endif

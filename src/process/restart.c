@@ -10,7 +10,7 @@
 #include "process.h"
 #include "setup.h"
 
-pid_t restart(struct Deploy d, struct Status *s) {
+pid_t restart(Deploy d, Status *s) {
     setupDeploy(&d);
 
     pid_t pid = start(d, s);

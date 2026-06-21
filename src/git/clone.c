@@ -12,7 +12,7 @@
 #include "config.h"
 #include "utils.h"
 
-void clone(struct Deploy d) {
+void clone(Deploy d) {
     char *home = getenv("HOME");
     if(home == NULL) {
         printf("Error: No HOME enviroment variable...");

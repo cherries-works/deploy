@@ -11,7 +11,7 @@
 #include "config.h"
 #include "utils.h"
 
-void build(struct Deploy d) {
+void build(Deploy d) {
     char buffer[ONE_KB];
     sprintf(
         buffer,

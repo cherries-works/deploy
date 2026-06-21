@@ -44,7 +44,7 @@ int parseWait(char *wait) {
     return total_time;
 }
 
-void parseHead(struct Deploy d, char* dest) {
+void parseHead(Deploy d, char* dest) {
     char buffer[ONE_KB];
     sprintf(buffer, "git ls-remote %s %s", d.repo, d.branch);
     FILE *file = popen(
@@ -56,8 +56,8 @@ void parseHead(struct Deploy d, char* dest) {
     pclose(file);
 }
 
-struct Deploy parseConfig(char *path) {
-    struct Deploy d = {
+Deploy parseConfig(char *path) {
+    Deploy d = {
         .repo = "",
         .branch = "",
         .name = "",

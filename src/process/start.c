@@ -9,7 +9,7 @@
 #include "config.h"
 #include "process.h"
 
-pid_t start(struct Deploy d, struct Status *s) {
+pid_t start(Deploy d, Status *s) {
     s->status = cloning;
     clone(d);
 

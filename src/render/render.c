@@ -7,7 +7,7 @@ void render() {
     printf("%s%sCherries Deploy%s ───────────────────────────────────── v0.1.0 ──── \n\n", BOLD, RED, RESET);
 }
 
-void renderStatus(struct Deploy d, struct Status s) {}
+void renderStatus(Deploy d, Status s) {}
 
 void help() {
     printf("%s%sCherries Deploy%s ───────────────────────────────────── v0.1.0 ──── \n\n", BOLD, RED, RESET);

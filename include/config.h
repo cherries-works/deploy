@@ -3,16 +3,16 @@
 
 #include <sys/types.h>
 
-enum STATUS {
+typedef enum {
     idle,
     waiting,
     building,
     running,
     cloning,
     deploying
-};
+} STATUS;
 
-struct Status {
+typedef struct {
     int started;
     int lastCheck;
 
@@ -24,11 +24,11 @@ struct Status {
     // whether or not we already checked for a commit
     int latestCommitCheck;
 
-    enum STATUS status;
+    STATUS status;
     pid_t pid;
-};
+} Status;
 
-struct Deploy {
+typedef struct {
     char repo[256];
     char branch[256];
     char name[256];
@@ -42,9 +42,9 @@ struct Deploy {
     int upgrade;
     int prune;
     int wait;
-};
+} Deploy;
 
-extern struct Deploy parseConfig(char *path);
-extern void parseHead(struct Deploy d, char* dest);
+extern Deploy parseConfig(char *path);
+extern void parseHead(Deploy d, char* dest);
 
 #endif

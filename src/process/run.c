@@ -12,7 +12,7 @@
 #include "config.h"
 #include "utils.h"
 
-pid_t run(struct Deploy d) {
+pid_t run(Deploy d) {
     char *home = getenv("HOME");
     if(home == NULL) {
         printf("Error: No HOME variable set.");

@@ -37,7 +37,7 @@ void setup() {
     }
 }
 
-void setupPath(struct Deploy d, char *buffer) {
+void setupPath(Deploy d, char *buffer) {
     char *home = getenv("HOME");
     if(home == NULL) {
         printf("Error: No HOME enviroment variable...");
@@ -48,7 +48,7 @@ void setupPath(struct Deploy d, char *buffer) {
     return;
 }
 
-void setupPathHash(struct Deploy d, char *hash, char *buffer) {
+void setupPathHash(Deploy d, char *hash, char *buffer) {
     char *home = getenv("HOME");
     if(home == NULL) {
         printf("Error: No HOME enviroment variable...");
@@ -59,7 +59,7 @@ void setupPathHash(struct Deploy d, char *hash, char *buffer) {
     return;
 }
 
-void setupDeploy(struct Deploy *d) {
+void setupDeploy(Deploy *d) {
     char *home = getenv("HOME");
     if(home == NULL) {
         printf("Error: No HOME enviroment variable...");

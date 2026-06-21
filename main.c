@@ -21,13 +21,13 @@ void handle_sigint(int sig) {
     _exit(0);
 }
 
-struct DeployArgs {
+typedef struct {
     int help;
     char *config;
-};
+} DeployArgs;
 
-struct DeployArgs parseArgs(int argc, char* argv[]) {
-    struct DeployArgs p = {
+DeployArgs parseArgs(int argc, char* argv[]) {
+    DeployArgs p = {
         .help = 0,
         .config = "cherries-deploy.toml"
     };
@@ -52,7 +52,7 @@ struct DeployArgs parseArgs(int argc, char* argv[]) {
 
 
 int main(int argc, char* argv[]) {
-    struct DeployArgs args = parseArgs(argc, argv);
+    DeployArgs args = parseArgs(argc, argv);
     if(args.help == 1) {
         help();
         return 0;
@@ -62,7 +62,7 @@ int main(int argc, char* argv[]) {
     render();
     setup();
 
-    struct Status s = {
+    Status s = {
         .status = idle,
         .pid = 0,
 
@@ -72,7 +72,7 @@ int main(int argc, char* argv[]) {
         .failedCommitCheck = 0
     };
 
-    struct Deploy d = parseConfig(args.config);
+    Deploy d = parseConfig(args.config);
     setupDeploy(&d);
 
     char previousHead[ONE_KB];
