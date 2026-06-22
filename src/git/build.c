@@ -12,7 +12,7 @@
 #include "utils.h"
 
 void build(Deploy d) {
-    char buffer[ONE_KB];
+    char buffer[BUFFER_ONE_KB];
     sprintf(
         buffer,
         "cd %s "

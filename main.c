@@ -75,8 +75,8 @@ int main(int argc, char* argv[]) {
     Deploy d = parseConfig(args.config);
     setupDeploy(&d);
 
-    char previousHead[ONE_KB];
-    char head[ONE_KB];
+    char previousHead[BUFFER_ONE_KB];
+    char head[BUFFER_ONE_KB];
 
     child_pid = start(d, &s);
     if(child_pid == -1) {
@@ -149,7 +149,7 @@ int main(int argc, char* argv[]) {
                 s.failedCommitCheck = 0;
                 printf("✓ Application running (pid %d)\n\n", child_pid);
                 if(d.prune == 1 && strlen(previousHead) != 0) {
-                    char previousHeadPath[ONE_KB];
+                    char previousHeadPath[BUFFER_ONE_KB];
                     setupPathHash(d, previousHead, previousHeadPath);
                     cleanDir(previousHeadPath);
                 }

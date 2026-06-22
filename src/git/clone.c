@@ -19,12 +19,12 @@ void clone(Deploy d) {
         return;
     }
 
-    char path[ONE_KB];
+    char path[BUFFER_ONE_KB];
     sprintf(path, "%s/%s/%s/%s", home, R_CHERRIES_FOLDER_DEPLOY, d.name, d.head);
     DIR *dir = opendir(path);
     if(dir) {
         closedir(dir);
-        char secondPath[ONE_KB];
+        char secondPath[BUFFER_ONE_KB];
         sprintf(secondPath, "%s/.git", path);
         dir = opendir(secondPath);
         if(dir) {
@@ -38,7 +38,7 @@ void clone(Deploy d) {
         mkdir(path, 0777);
     }
 
-    char buffer[ONE_KB];
+    char buffer[BUFFER_ONE_KB];
     sprintf(
         buffer,
         "cd %s " 

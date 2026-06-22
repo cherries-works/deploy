@@ -9,12 +9,12 @@ int isDigit(char ch) {
     return (ch >= '0' && ch <= '9') ? 1 : 0;
 }
 
-int parseWait(char *wait) {
-    int size = strlen(wait);
+unsigned parseWait(char *wait) {
+    size_t size = strlen(wait);
 
-    int total_time = 0;
-    int saved_time = 0;
-    for(int i = 0; i < size; i++) {
+    unsigned total_time = 0;
+    unsigned saved_time = 0;
+    for(size_t i = 0; i < size; i++) {
         char w = wait[i];
         if(w == ' ') continue;
         if(isDigit(w) == 1) {
@@ -22,7 +22,7 @@ int parseWait(char *wait) {
                 saved_time *= 10;
             }
 
-            saved_time += (w - '0');
+            saved_time += (unsigned)(w - '0');
         } else {
             if(w == 's') {
                 total_time += saved_time;
@@ -45,7 +45,7 @@ int parseWait(char *wait) {
 }
 
 void parseHead(Deploy d, char* dest) {
-    char buffer[ONE_KB];
+    char buffer[BUFFER_ONE_KB];
     sprintf(buffer, "git ls-remote %s %s", d.repo, d.branch);
     FILE *file = popen(
         buffer,
@@ -73,14 +73,15 @@ Deploy parseConfig(char *path) {
         .wait = 60
     };
 
-    char buffer[ONE_KB];
+    size_t buffer_size = BUFFER_ONE_KB;
+    char buffer[buffer_size];
     FILE *file = fopen(path, "r");
     if(file == NULL) {
         printf("No config file found. (%s)\n", path);
         exit(EXIT_FAILURE);
     }
 
-    size_t n = fread(buffer, 1, ONE_KB - 1, file);
+    size_t n = fread(buffer, 1, buffer_size - 1, file);
     buffer[n] = '\0';
 
     char *line = strtok(buffer, "\n");
@@ -106,8 +107,13 @@ Deploy parseConfig(char *path) {
             strcpy(d.repo, line);
 
             char *slash = strrchr(line, '/');
-            *slash = '\0';
-            line = slash + 1;
+            if(slash) {
+                *slash = '\0';
+                line = slash + 1;
+            } else {
+                line = strtok(NULL, "\n");
+                continue;
+            }
             strcpy(d.name, line);
         } else if(strcmp(line, "branch") == 0) {
             line = space + 1;
@@ -183,7 +189,7 @@ Deploy parseConfig(char *path) {
             }
 
             line = space + 1;
-            int w = parseWait(line);
+            unsigned w = parseWait(line);
             d.wait = w;
         }
 

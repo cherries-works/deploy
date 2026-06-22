@@ -41,7 +41,7 @@ typedef struct {
 
     int upgrade;
     int prune;
-    int wait;
+    unsigned wait;
 } Deploy;
 
 extern Deploy parseConfig(char *path);

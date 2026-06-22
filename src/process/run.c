@@ -19,7 +19,7 @@ pid_t run(Deploy d) {
         return -1;
     }
 
-    char path[ONE_KB];
+    char path[BUFFER_ONE_KB];
     sprintf(
         path, 
         "%s/%s/%s/%s",
@@ -29,7 +29,7 @@ pid_t run(Deploy d) {
         d.head
     );
 
-    char buffer[ONE_KB];
+    char buffer[BUFFER_ONE_KB];
     sprintf(
         buffer,
         "cd %s "

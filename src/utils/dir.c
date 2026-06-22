@@ -16,9 +16,9 @@ void cleanDir(char *path) {
     DIR *dir = opendir(path);
     if(!dir) return;
 
-    char newPath[ONE_KB];
+    char newPath[BUFFER_ONE_KB];
     while((entry = readdir(dir)) != NULL) {
-        int len = strlen(path) + strlen(entry->d_name) + 1; // dir length + file name length + /
+        size_t len = strlen(path) + strlen(entry->d_name) + 1; // dir length + file name length + /
         if(strcmp(entry->d_name, ".") == 0) continue;
         if(strcmp(entry->d_name, "..") == 0) continue;
 

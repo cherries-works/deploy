@@ -17,7 +17,7 @@ void setup() {
         return;
     }
 
-    char path[ONE_KB];
+    char path[BUFFER_ONE_KB];
     sprintf(path, "%s/%s", home, R_CHERRIES_FOLDER);
 
     DIR *dir = opendir(path);
@@ -66,7 +66,7 @@ void setupDeploy(Deploy *d) {
         return;
     }
 
-    char path[ONE_KB];
+    char path[BUFFER_ONE_KB];
     sprintf(path, "%s/%s/%s", home, R_CHERRIES_FOLDER_DEPLOY, d->name);
 
     DIR *dir = opendir(path);
@@ -85,7 +85,7 @@ void setupDeploy(Deploy *d) {
         closedir(dir);
     }
 
-    char head[ONE_KB];
+    char head[BUFFER_ONE_KB];
     if(strlen(d->head) == 0) {
         parseHead(*d, head);
         strcpy(d->head, head);
