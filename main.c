@@ -65,8 +65,8 @@ int main(int argc, char* argv[]) {
         .status = idle,
         .pid = 0,
 
-        .started = 0,
-        .failed_commit_check = 0
+        .started = false,
+        .failed_commit_check = false
     };
 
     Deploy d = parseConfig(args.config);
@@ -89,8 +89,8 @@ int main(int argc, char* argv[]) {
         pid_t r = waitpid(child_pid, &status, WNOHANG);
 
         if (r == child_pid) {
-            s.latest_commit_check = 0;
-            s.failed_commit_check = 0;
+            s.latest_commit_check = false;
+            s.failed_commit_check = false;
             if (WIFEXITED(status)) {
                 printf("× Application exited (exited)\n");
             } else if (WIFSIGNALED(status)) {
@@ -109,13 +109,13 @@ int main(int argc, char* argv[]) {
         }
 
         parseHead(d, head);
-        if(strcmp(d.head, head) != 0 && d.upgrade == 1) {
-            if(strcmp(d.failed_head, head) == 0) {
-                if(s.failed_commit_check == 0) {
-                    s.failed_commit_check = 1;
+        if(strcmp(d.head, head) != 0 && d.upgrade) {
+            if(strcmp(d.failed_head, head) == false) {
+                if(s.failed_commit_check == false) {
+                    s.failed_commit_check = true;
                 }
             } else {
-                s.latest_commit_check = 0;
+                s.latest_commit_check = false;
                 printf("▲ New commit detected\n");
                 printf("▲ Updating program\n");
 
@@ -143,9 +143,9 @@ int main(int argc, char* argv[]) {
                     }
                 }
 
-                s.failed_commit_check = 0;
+                s.failed_commit_check = false;
                 printf("✓ Application running (pid %d)\n\n", child_pid);
-                if(d.prune == 1 && strlen(previous_head) != 0) {
+                if(d.prune && strlen(previous_head) != 0) {
                     char previous_head_path[BUFFER_ONE_KB];
                     setupPathHash(d, previous_head, previous_head_path, BUFFER_ONE_KB);
                     cleanDir(previous_head_path);
@@ -153,8 +153,8 @@ int main(int argc, char* argv[]) {
             }
         }
 
-        if(s.latest_commit_check == 0) {
-            s.latest_commit_check = 1;
+        if(!s.latest_commit_check) {
+            s.latest_commit_check = true;
             printf("▲ Waiting for next commit\n\n");
         }
         sleep(d.wait);

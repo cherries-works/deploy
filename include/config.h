@@ -2,6 +2,7 @@
 #define CONFIG_H
 
 #include <sys/types.h>
+#include <stdbool.h>
 
 typedef enum {
     idle,
@@ -13,13 +14,13 @@ typedef enum {
 } STATUS;
 
 typedef struct {
-    int started;
+    bool started;
 
     // whether or not we already checked a failed commit
-    int failed_commit_check;
+    bool failed_commit_check;
 
     // whether or not we already checked for a commit
-    int latest_commit_check;
+    bool latest_commit_check;
 
     STATUS status;
     pid_t pid;
@@ -36,8 +37,8 @@ typedef struct {
     char previous_head[256];
     char failed_head[256];
 
-    int upgrade;
-    int prune;
+    bool upgrade;
+    bool prune;
     unsigned wait;
 } Deploy;
 

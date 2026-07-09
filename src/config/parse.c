@@ -74,8 +74,8 @@ Deploy parseConfig(char *path) {
         .previous_head = "",
         .failed_head = "",
 
-        .upgrade = 1,
-        .prune = 0,
+        .upgrade = true,
+        .prune = false,
         .wait = 60
     };
 
@@ -172,7 +172,7 @@ Deploy parseConfig(char *path) {
 
             line = space + 1;
             if(strcmp(line, "false") == 0) {
-                d.upgrade = 0;
+                d.upgrade = false;
             }
         } else if(strcmp(line, "prune") == 0) {
             line = space + 1;
@@ -184,7 +184,7 @@ Deploy parseConfig(char *path) {
 
             line = space + 1;
             if(strcmp(line, "true") == 0) {
-                d.prune = 1;
+                d.prune = true;
             }
         } else if(strcmp(line, "wait") == 0) {
             line = space + 1;
