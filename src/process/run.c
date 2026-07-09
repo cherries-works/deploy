@@ -20,9 +20,10 @@ pid_t run(Deploy d) {
     }
 
     char path[BUFFER_ONE_KB];
-    sprintf(
-        path, 
-        "%s/%s/%s/%s",
+    snprintf(
+        path,
+        BUFFER_ONE_KB, 
+        "%s/%s/projects/%s/%s",
         home,
         R_CHERRIES_FOLDER_DEPLOY,
         d.name,
@@ -30,8 +31,9 @@ pid_t run(Deploy d) {
     );
 
     char buffer[BUFFER_ONE_KB];
-    sprintf(
+    snprintf(
         buffer,
+        BUFFER_ONE_KB,
         "cd %s "
         "&& "
         "%s",

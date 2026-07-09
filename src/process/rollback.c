@@ -10,7 +10,7 @@
 #include "process.h"
 
 pid_t rollback(Deploy *d, char *hash) {
-    strcpy(d->failedHead, d->head);
+    strcpy(d->failed_head, d->head);
     strcpy(d->head, hash);
 
     pid_t pid = run(*d);

@@ -18,7 +18,13 @@ void setup() {
     }
 
     char path[BUFFER_ONE_KB];
-    sprintf(path, "%s/%s", home, R_CHERRIES_FOLDER);
+    snprintf(
+        path,
+        BUFFER_ONE_KB,
+        "%s/%s",
+        home,
+        R_CHERRIES_FOLDER
+    );
 
     DIR *dir = opendir(path);
     if(!dir) {
@@ -27,8 +33,44 @@ void setup() {
         closedir(dir);
     }
 
+    snprintf(
+        path,
+        BUFFER_ONE_KB,
+        "%s/%s",
+        home,
+        R_CHERRIES_FOLDER_DEPLOY
+    );
+
+    dir = opendir(path);
+    if(!dir) {
+        mkdir(path, 0755);
+    } else {
+        closedir(dir);
+    }
+
+    snprintf(
+        path,
+        BUFFER_ONE_KB,
+        "%s/%s/projects",
+        home,
+        R_CHERRIES_FOLDER_DEPLOY
+    );
+
+    dir = opendir(path);
+    if(!dir) {
+        mkdir(path, 0755);
+    } else {
+        closedir(dir);
+    }
+
+    snprintf(
+        path,
+        BUFFER_ONE_KB,
+        "%s/%s/running",
+        home,
+        R_CHERRIES_FOLDER_DEPLOY
+    );
     
-    sprintf(path, "%s/%s", home, R_CHERRIES_FOLDER_DEPLOY);
     dir = opendir(path);
     if(!dir) {
         mkdir(path, 0755);
@@ -37,25 +79,50 @@ void setup() {
     }
 }
 
-void setupPath(Deploy d, char *buffer) {
+void setupPath(
+    Deploy d,
+    char *buffer,
+    size_t buffer_size
+) {
     char *home = getenv("HOME");
     if(home == NULL) {
         printf("Error: No HOME enviroment variable...");
         return;
     }
 
-    sprintf(buffer, "%s/%s/%s/%s", home, R_CHERRIES_FOLDER_DEPLOY, d.name, d.head);
+    snprintf(
+        buffer,
+        buffer_size,
+        "%s/%s/projects/%s/%s",
+        home,
+        R_CHERRIES_FOLDER_DEPLOY,
+        d.name,
+        d.head
+    );
     return;
 }
 
-void setupPathHash(Deploy d, char *hash, char *buffer) {
+void setupPathHash(
+    Deploy d,
+    char *hash,
+    char *buffer,
+    size_t buffer_size
+) {
     char *home = getenv("HOME");
     if(home == NULL) {
         printf("Error: No HOME enviroment variable...");
         return;
     }
 
-    sprintf(buffer, "%s/%s/%s/%s", home, R_CHERRIES_FOLDER_DEPLOY, d.name, hash);
+    snprintf(
+        buffer,
+        buffer_size,
+        "%s/%s/projects/%s/%s",
+        home,
+        R_CHERRIES_FOLDER_DEPLOY,
+        d.name,
+        hash
+    );
     return;
 }
 
@@ -67,7 +134,14 @@ void setupDeploy(Deploy *d) {
     }
 
     char path[BUFFER_ONE_KB];
-    sprintf(path, "%s/%s/%s", home, R_CHERRIES_FOLDER_DEPLOY, d->name);
+    snprintf(
+        path,
+        BUFFER_ONE_KB,
+        "%s/%s/projects/%s",
+        home,
+        R_CHERRIES_FOLDER_DEPLOY,
+        d->name
+    );
 
     DIR *dir = opendir(path);
     if(!dir) {
@@ -76,7 +150,15 @@ void setupDeploy(Deploy *d) {
         closedir(dir);
     }
 
-    sprintf(path, "%s/%s/%s/%s", home, R_CHERRIES_FOLDER_DEPLOY, d->name, d->head);
+    snprintf(
+        path,
+        BUFFER_ONE_KB,
+        "%s/%s/projects/%s/%s",
+        home,
+        R_CHERRIES_FOLDER_DEPLOY,
+        d->name,
+        d->head
+    );
 
     dir = opendir(path);
     if(!dir) {

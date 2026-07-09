@@ -14,15 +14,12 @@ typedef enum {
 
 typedef struct {
     int started;
-    int lastCheck;
-
-    int terminalLines;
 
     // whether or not we already checked a failed commit
-    int failedCommitCheck;
+    int failed_commit_check;
 
     // whether or not we already checked for a commit
-    int latestCommitCheck;
+    int latest_commit_check;
 
     STATUS status;
     pid_t pid;
@@ -36,8 +33,8 @@ typedef struct {
     char run[256];
 
     char head[256];
-    char previousHead[256];
-    char failedHead[256];
+    char previous_head[256];
+    char failed_head[256];
 
     int upgrade;
     int prune;

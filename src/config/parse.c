@@ -46,7 +46,13 @@ unsigned parseWait(char *wait) {
 
 void parseHead(Deploy d, char* dest) {
     char buffer[BUFFER_ONE_KB];
-    sprintf(buffer, "git ls-remote %s %s", d.repo, d.branch);
+    snprintf(
+        buffer,
+        BUFFER_ONE_KB,
+        "git ls-remote %s %s",
+        d.repo,
+        d.branch
+    );
     FILE *file = popen(
         buffer,
         "r"
@@ -65,8 +71,8 @@ Deploy parseConfig(char *path) {
         .run = "",
         
         .head = "",
-        .previousHead = "",
-        .failedHead = "",
+        .previous_head = "",
+        .failed_head = "",
 
         .upgrade = 1,
         .prune = 0,

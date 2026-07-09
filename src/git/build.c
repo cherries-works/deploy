@@ -1,11 +1,5 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <unistd.h>
-#include <signal.h>
-#include <sys/types.h>
-#include <string.h>
-#include <dirent.h>
-#include <sys/wait.h>
 
 #include "git.h"
 #include "config.h"
@@ -13,13 +7,10 @@
 
 void build(Deploy d) {
     char buffer[BUFFER_ONE_KB];
-    sprintf(
+    snprintf(
         buffer,
-        "cd %s "
-        "&& "
-        "cd %s "
-        "&& "
-        "cd %s "
+        BUFFER_ONE_KB,
+        "cd %s/projects/%s/%s "
         "&& "
         "(%s) > /dev/null 2>&1",
         CHERRIES_FOLDER_DEPLOY,

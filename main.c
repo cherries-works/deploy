@@ -46,7 +46,6 @@ DeployArgs parseArgs(int argc, char* argv[]) {
         }
     }
 
-
     return p;
 }
 
@@ -66,16 +65,14 @@ int main(int argc, char* argv[]) {
         .status = idle,
         .pid = 0,
 
-        .terminalLines = 0,
         .started = 0,
-        .lastCheck = 0,
-        .failedCommitCheck = 0
+        .failed_commit_check = 0
     };
 
     Deploy d = parseConfig(args.config);
     setupDeploy(&d);
 
-    char previousHead[BUFFER_ONE_KB];
+    char previous_head[BUFFER_ONE_KB];
     char head[BUFFER_ONE_KB];
 
     child_pid = start(d, &s);
@@ -92,8 +89,8 @@ int main(int argc, char* argv[]) {
         pid_t r = waitpid(child_pid, &status, WNOHANG);
 
         if (r == child_pid) {
-            s.latestCommitCheck = 0;
-            s.failedCommitCheck = 0;
+            s.latest_commit_check = 0;
+            s.failed_commit_check = 0;
             if (WIFEXITED(status)) {
                 printf("× Application exited (exited)\n");
             } else if (WIFSIGNALED(status)) {
@@ -113,20 +110,20 @@ int main(int argc, char* argv[]) {
 
         parseHead(d, head);
         if(strcmp(d.head, head) != 0 && d.upgrade == 1) {
-            if(strcmp(d.failedHead, head) == 0) {
-                if(s.failedCommitCheck == 0) {
-                    s.failedCommitCheck = 1;
+            if(strcmp(d.failed_head, head) == 0) {
+                if(s.failed_commit_check == 0) {
+                    s.failed_commit_check = 1;
                 }
             } else {
-                s.latestCommitCheck = 0;
+                s.latest_commit_check = 0;
                 printf("▲ New commit detected\n");
                 printf("▲ Updating program\n");
 
-                if(strlen(d.previousHead) > 0) {
-                    strcpy(previousHead, d.previousHead);
+                if(strlen(d.previous_head) > 0) {
+                    strcpy(previous_head, d.previous_head);
                 }
 
-                strcpy(d.previousHead, d.head);
+                strcpy(d.previous_head, d.head);
                 strcpy(d.head, head);
 
                 kill(child_pid, SIGKILL);
@@ -137,7 +134,7 @@ int main(int argc, char* argv[]) {
 
                 if(child_pid == -1) {
                     printf("× Application failed (rolling back)\n\n");
-                    child_pid = rollback(&d, d.previousHead);
+                    child_pid = rollback(&d, d.previous_head);
                     if(child_pid == -1) {
                         printf("× Application failed (exited)\n");
                         exit(EXIT_FAILURE);
@@ -146,18 +143,18 @@ int main(int argc, char* argv[]) {
                     }
                 }
 
-                s.failedCommitCheck = 0;
+                s.failed_commit_check = 0;
                 printf("✓ Application running (pid %d)\n\n", child_pid);
-                if(d.prune == 1 && strlen(previousHead) != 0) {
-                    char previousHeadPath[BUFFER_ONE_KB];
-                    setupPathHash(d, previousHead, previousHeadPath);
-                    cleanDir(previousHeadPath);
+                if(d.prune == 1 && strlen(previous_head) != 0) {
+                    char previous_head_path[BUFFER_ONE_KB];
+                    setupPathHash(d, previous_head, previous_head_path, BUFFER_ONE_KB);
+                    cleanDir(previous_head_path);
                 }
             }
         }
 
-        if(s.latestCommitCheck == 0) {
-            s.latestCommitCheck = 1;
+        if(s.latest_commit_check == 0) {
+            s.latest_commit_check = 1;
             printf("▲ Waiting for next commit\n\n");
         }
         sleep(d.wait);

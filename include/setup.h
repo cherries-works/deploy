@@ -5,7 +5,7 @@
 
 extern void setup();
 extern void setupDeploy(Deploy *d);
-extern void setupPath(Deploy d, char *buffer);
-extern void setupPathHash(Deploy d, char *hash, char *buffer);
+extern void setupPath(Deploy d, char *buffer, size_t buffer_size);
+extern void setupPathHash(Deploy d, char *hash, char *buffer, size_t buffer_size);
 
 #endif

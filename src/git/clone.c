@@ -20,18 +20,25 @@ void clone(Deploy d) {
     }
 
     char path[BUFFER_ONE_KB];
-    sprintf(path, "%s/%s/%s/%s", home, R_CHERRIES_FOLDER_DEPLOY, d.name, d.head);
+    snprintf(
+        path,
+        BUFFER_ONE_KB,
+        "%s/%s/projects/%s/%s",
+        home,
+        R_CHERRIES_FOLDER_DEPLOY,
+        d.name,
+        d.head
+    );
+
     DIR *dir = opendir(path);
     if(dir) {
         closedir(dir);
         char secondPath[BUFFER_ONE_KB];
-        sprintf(secondPath, "%s/.git", path);
+        snprintf(secondPath, BUFFER_ONE_KB, "%s/.git", path);
         dir = opendir(secondPath);
         if(dir) {
             closedir(dir);
             printf("✓ Repository ready\n");
-            
-            // printf("> path already exists - not cloning.\n");
             return;
         }
     } else {
@@ -39,8 +46,9 @@ void clone(Deploy d) {
     }
 
     char buffer[BUFFER_ONE_KB];
-    sprintf(
+    snprintf(
         buffer,
+        BUFFER_ONE_KB,
         "cd %s " 
         "&& "
         "git clone " 
@@ -54,8 +62,9 @@ void clone(Deploy d) {
     );
     system(buffer);
 
-    sprintf(
+    snprintf(
         buffer,
+        BUFFER_ONE_KB,
         "cd %s " 
         "&& "
         "git fetch " 
@@ -70,8 +79,8 @@ void clone(Deploy d) {
         d.head,
         d.head
     );
-
     system(buffer);
+
     printf("✓ Repository cloned\n");
     return;
 }

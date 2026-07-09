@@ -22,16 +22,16 @@ char *EIGHT_BARS =  "████████░░";
 char *NINE_BARS =   "█████████░";
 char *TEN_BARS =    "██████████";
 
-char *getBars(float val) {
-    if(val < 10.0f) return ONE_BARS;
-    if(val < 20.0f) return TWO_BARS;
-    if(val < 30.0f) return THREE_BARS;
-    if(val < 40.0f) return FOUR_BARS;
-    if(val < 50.0f) return FIVE_BARS;
-    if(val < 60.0f) return SIX_BARS;
-    if(val < 70.0f) return SEVEN_BARS;
-    if(val < 80.0f) return EIGHT_BARS;
-    if(val < 90.0f) return NINE_BARS;
+char *getBars(float value) {
+    if(value < 10.0f) return ONE_BARS;
+    if(value < 20.0f) return TWO_BARS;
+    if(value < 30.0f) return THREE_BARS;
+    if(value < 40.0f) return FOUR_BARS;
+    if(value < 50.0f) return FIVE_BARS;
+    if(value < 60.0f) return SIX_BARS;
+    if(value < 70.0f) return SEVEN_BARS;
+    if(value < 80.0f) return EIGHT_BARS;
+    if(value < 90.0f) return NINE_BARS;
     return TEN_BARS;
 }
 
