@@ -62,22 +62,22 @@ void parseHead(Deploy d, char* dest) {
     pclose(file);
 }
 
-Deploy parseConfig(char *path) {
-    Deploy d = {
-        .repo = "",
-        .branch = "",
-        .name = "",
-        .build = "",
-        .run = "",
-        
-        .head = "",
-        .previous_head = "",
-        .failed_head = "",
+void parseConfig(
+    char *path,
+    Deploy *d
+) {
+    strcpy(d->repo, "");
+    strcpy(d->branch, "");
+    strcpy(d->head, "");
+    strcpy(d->build, "");
+    strcpy(d->failed_head, "");
+    strcpy(d->previous_head, "");
+    strcpy(d->run, "");
 
-        .upgrade = true,
-        .prune = false,
-        .wait = 60
-    };
+    d->prune = true;
+    d->upgrade = true;
+    d->wait = 60;
+
 
     size_t buffer_size = BUFFER_ONE_KB;
     char buffer[buffer_size];
@@ -110,7 +110,7 @@ Deploy parseConfig(char *path) {
             }
 
             line = space + 1;
-            strcpy(d.repo, line);
+            strcpy(d->repo, line);
 
             char *slash = strrchr(line, '/');
             if(slash) {
@@ -120,7 +120,7 @@ Deploy parseConfig(char *path) {
                 line = strtok(NULL, "\n");
                 continue;
             }
-            strcpy(d.name, line);
+            strcpy(d->name, line);
         } else if(strcmp(line, "branch") == 0) {
             line = space + 1;
 
@@ -131,7 +131,7 @@ Deploy parseConfig(char *path) {
             }
 
             line = space + 1;
-            strcpy(d.branch, line);
+            strcpy(d->branch, line);
         } else if(strcmp(line, "build") == 0) {
             line = space + 1;
             space = strchr(line, ' ');
@@ -141,7 +141,7 @@ Deploy parseConfig(char *path) {
             }
 
             line = space + 1;
-            strcpy(d.build, line);
+            strcpy(d->build, line);
         } else if(strcmp(line, "head") == 0) {
             line = space + 1;
             space = strchr(line, ' ');
@@ -151,7 +151,7 @@ Deploy parseConfig(char *path) {
             }
 
             line = space + 1;
-            strcpy(d.head, line);
+            strcpy(d->head, line);
         } else if(strcmp(line, "run") == 0) {
             line = space + 1;
             space = strchr(line, ' ');
@@ -161,7 +161,7 @@ Deploy parseConfig(char *path) {
             }
 
             line = space + 1;
-            strcpy(d.run, line);
+            strcpy(d->run, line);
         } else if(strcmp(line, "upgrade") == 0) {
             line = space + 1;
             space = strchr(line, ' ');
@@ -172,7 +172,7 @@ Deploy parseConfig(char *path) {
 
             line = space + 1;
             if(strcmp(line, "false") == 0) {
-                d.upgrade = false;
+                d->upgrade = false;
             }
         } else if(strcmp(line, "prune") == 0) {
             line = space + 1;
@@ -184,7 +184,7 @@ Deploy parseConfig(char *path) {
 
             line = space + 1;
             if(strcmp(line, "true") == 0) {
-                d.prune = true;
+                d->prune = true;
             }
         } else if(strcmp(line, "wait") == 0) {
             line = space + 1;
@@ -196,12 +196,13 @@ Deploy parseConfig(char *path) {
 
             line = space + 1;
             unsigned w = parseWait(line);
-            d.wait = w;
+            d->wait = w;
         }
 
         line = strtok(NULL, "\n");
     }
 
     fclose(file);
-    return d;
+    
+    return;
 }
