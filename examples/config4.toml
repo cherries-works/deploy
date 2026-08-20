@@ -1,8 +1,6 @@
 repo = https://github.com/cherries-works/website
 branch = main
 wait = 5 seconds
-head = 9a3081e478ca3965e7121aedfa4d94765d9df2ac
-
 
 build = make && ./build/main
 run = cd dist && python3 -m http.server 8080
