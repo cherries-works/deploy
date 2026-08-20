@@ -31,6 +31,5 @@ extern char *getBars(float value);
 extern char* getColor(float value);
 
 extern void render(Status s);
-extern void help();
 
 #endif

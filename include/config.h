@@ -12,7 +12,7 @@ typedef enum {
     running,
     cloning,
     deploying
-} STATUS;
+} Status_e;
 
 typedef struct {
     bool started;
@@ -23,7 +23,7 @@ typedef struct {
     // whether or not we already checked for a commit
     bool latest_commit_check;
     
-    STATUS status;
+    Status_e status;
     pid_t pid;
     char hash[256];
 } Status;

@@ -13,17 +13,11 @@
 #include "render.h"
 
 pid_t initialize(
-    int argc,
-    char *argv[],
-
     Deploy *deploy,
     Status *status,
     Args *args
 ) {
     setup();
-
-    parseArgs(argc, argv, args);
-    if(args->help == true) return 1;
 
     status->status = parsing;
     parseConfig(args->config, deploy);

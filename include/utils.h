@@ -3,16 +3,21 @@
 
 #include "config.h"
 
+typedef enum {
+    HELP,
+    RUN,
+    STOP,
+    PS
+} Commands;
+
 typedef struct {
-    int help;
+    Commands command;
     char *config;
 } Args;
 
 extern void parseArgs(int argc, char* argv[], Args *args);
 
 extern pid_t initialize(
-    int argc,
-    char *argv[],
     Deploy *d,
     Status *s,
     Args *args

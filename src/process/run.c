@@ -48,8 +48,6 @@ pid_t run(Deploy d) {
     }
 
     if (pid == 0) {
-        setpgid(0, 0);
-
         int dev_null = open("/dev/null", O_WRONLY);
         if (dev_null >= 0) {
             dup2(dev_null, STDOUT_FILENO);
@@ -70,6 +68,16 @@ pid_t run(Deploy d) {
         printf("Error: Waitpid failed WNOHANG.\n");
         return -1;
     }
+
+    snprintf(
+        path,
+        BUFFER_ONE_KB,
+        "%s/%s/running/%d",
+        home,
+        R_CHERRIES_FOLDER_DEPLOY,
+        pid
+    );
+    creat(path, 0755);
 
     return pid;
 }
