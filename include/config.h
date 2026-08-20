@@ -6,6 +6,7 @@
 
 typedef enum {
     idle,
+    parsing,
     waiting,
     building,
     running,
@@ -21,9 +22,10 @@ typedef struct {
 
     // whether or not we already checked for a commit
     bool latest_commit_check;
-
+    
     STATUS status;
     pid_t pid;
+    char hash[256];
 } Status;
 
 typedef struct {
@@ -42,7 +44,7 @@ typedef struct {
     unsigned wait;
 } Deploy;
 
-extern Deploy parseConfig(char *path);
+extern void parseConfig(char *path, Deploy *d);
 extern void parseHead(Deploy d, char* dest);
 
 #endif

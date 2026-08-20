@@ -1,6 +1,8 @@
 #ifndef RENDER_H
 #define RENDER_H
 
+#include "config.h"
+
 extern char *RED;
 extern char *GREEN;
 extern char *YELLOW;
@@ -28,7 +30,7 @@ extern char *TEN_BARS;
 extern char *getBars(float value);
 extern char* getColor(float value);
 
-extern void render();
+extern void render(Status s);
 extern void help();
 
 #endif
