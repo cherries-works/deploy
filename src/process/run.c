@@ -15,14 +15,14 @@
 pid_t run(Deploy d) {
     char *home = getenv("HOME");
     if(home == NULL) {
-        printf("Error: No HOME variable set.");
+        printf("Error: No HOME variable set.\n");
         return -1;
     }
 
     char path[BUFFER_ONE_KB];
     snprintf(
         path,
-        BUFFER_ONE_KB, 
+        BUFFER_ONE_KB,
         "%s/%s/projects/%s/%s",
         home,
         R_CHERRIES_FOLDER_DEPLOY,
@@ -42,7 +42,10 @@ pid_t run(Deploy d) {
     );
 
     pid_t pid = fork();
-    if (pid < 0) return -1;
+    if (pid < 0) {
+        printf("Error: Forking process failed.\n");
+        return -1;
+    }
 
     if (pid == 0) {
         setpgid(0, 0);
@@ -63,7 +66,10 @@ pid_t run(Deploy d) {
 
     int status;
     pid_t r = waitpid(pid, &status, WNOHANG);
-    if(r == pid) return -1;
+    if(r == pid) {
+        printf("Error: Waitpid failed WNOHANG.\n");
+        return -1;
+    }
 
     return pid;
 }
