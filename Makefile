@@ -12,7 +12,7 @@ main = main.c
 config = src/config/parse.c
 git = src/git/build.c src/git/clone.c
 process = src/process/run.c src/process/restart.c src/process/start.c src/process/rollback.c
-utils = src/utils/constants.c src/utils/strings.c src/utils/dir.c src/utils/terminal.c
+utils = src/utils/constants.c src/utils/strings.c src/utils/dir.c src/utils/terminal.c src/utils/args.c src/utils/initializer.c
 setup = src/setup/setup.c
 render = src/render/render.c src/render/utils.c
 

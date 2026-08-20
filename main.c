@@ -21,143 +21,117 @@ void handle_sigint(int sig) {
     _exit(0);
 }
 
-typedef struct {
-    int help;
-    char *config;
-} DeployArgs;
-
-DeployArgs parseArgs(int argc, char* argv[]) {
-    DeployArgs p = {
-        .help = 0,
-        .config = "cherries-deploy.toml"
-    };
-
-    for(int i = 0; i < argc; i++) {
-        char* arg = argv[i];
-
-        if(strcmp(arg, "--config") == 0) {
-            if(i == argc - 1) continue;
-            p.config = argv[i + 1];
-        }
-
-        if(strcmp(arg, "--help") == 0) {
-            p.help = 1;
-            break;
-        }
-    }
-
-    return p;
-}
-
-
 int main(int argc, char* argv[]) {
-    DeployArgs args = parseArgs(argc, argv);
+    signal(SIGINT, handle_sigint);
+
+    Status status = {};
+    Deploy deploy = {};
+    Args args = {};
+    render(status);
+
+    pid_t child_pid = initialize(
+        argc,
+        argv,
+        &deploy,
+        &status,
+        &args
+    );
+
     if(args.help == 1) {
         help();
         return 0;
     }
 
-    signal(SIGINT, handle_sigint);
-    render();
-    setup();
-
-    Status s = {
-        .status = idle,
-        .pid = 0,
-
-        .started = false,
-        .failed_commit_check = false
-    };
-
-    Deploy d = parseConfig(args.config);
-    setupDeploy(&d);
-
     char previous_head[BUFFER_ONE_KB];
     char head[BUFFER_ONE_KB];
 
-    child_pid = start(d, &s);
-    if(child_pid == -1) {
-        printf("× Application failed (exiting)\n");
-        exit(EXIT_FAILURE);
-    }
-    
-    printf("✓ Application running (pid %d)\n\n", child_pid);
-    s.status = waiting;
+    status.status = waiting;
 
-    while(1) {
-        int status;
-        pid_t r = waitpid(child_pid, &status, WNOHANG);
+    while(true) {
+        int pid_status;
+        pid_t r = waitpid(child_pid, &pid_status, WNOHANG);
 
         if (r == child_pid) {
-            s.latest_commit_check = false;
-            s.failed_commit_check = false;
-            if (WIFEXITED(status)) {
+            status.latest_commit_check = false;
+            status.failed_commit_check = false;
+            if (WIFEXITED(pid_status)) {
                 printf("× Application exited (exited)\n");
-            } else if (WIFSIGNALED(status)) {
+            } else if (WIFSIGNALED(pid_status)) {
                 printf("× Application terminated (terminated)\n");
             } else {
                 printf("× Application failed (restarting)\n");
             }
 
             printf("▲ Restarting\n");
-            child_pid = restart(d, &s);
+            status.status = building;
+
+            child_pid = restart(deploy, &status);
             if(child_pid == -1) {
                 printf("× Application failed (exited)\n");
                 exit(EXIT_FAILURE);
             }
             printf("✓ Application restarted (pid %d)\n\n", child_pid);
+            status.status = idle;
         }
 
-        parseHead(d, head);
-        if(strcmp(d.head, head) != 0 && d.upgrade) {
-            if(strcmp(d.failed_head, head) == false) {
-                if(s.failed_commit_check == false) {
-                    s.failed_commit_check = true;
+        parseHead(deploy, head);
+        if(strcmp(deploy.head, head) != 0 && deploy.upgrade) {
+            if(strcmp(deploy.failed_head, head) == false) {
+                if(status.failed_commit_check == false) {
+                    status.failed_commit_check = true;
                 }
             } else {
-                s.latest_commit_check = false;
+                status.status = building;
+
+                status.latest_commit_check = false;
                 printf("▲ New commit detected\n");
                 printf("▲ Updating program\n");
 
-                if(strlen(d.previous_head) > 0) {
-                    strcpy(previous_head, d.previous_head);
+                if(strlen(deploy.previous_head) > 0) {
+                    strcpy(previous_head, deploy.previous_head);
                 }
 
-                strcpy(d.previous_head, d.head);
-                strcpy(d.head, head);
+                strcpy(deploy.previous_head, deploy.head);
+                strcpy(deploy.head, head);
 
                 kill(child_pid, SIGKILL);
                 waitpid(child_pid, NULL, 0);
 
                 printf("▲ Stopped application (pid %d)\n\n", child_pid);
-                child_pid = restart(d, &s);
+                child_pid = restart(deploy, &status);
 
                 if(child_pid == -1) {
                     printf("× Application failed (rolling back)\n\n");
-                    child_pid = rollback(&d, d.previous_head);
+
+                    child_pid = rollback(&deploy, deploy.previous_head);
                     if(child_pid == -1) {
                         printf("× Application failed (exited)\n");
                         exit(EXIT_FAILURE);
                     } else {
+                        status.status = deploying;
                         printf("✓ Rollback completed\n");
                     }
                 }
 
-                s.failed_commit_check = false;
+                status.failed_commit_check = false;
                 printf("✓ Application running (pid %d)\n\n", child_pid);
-                if(d.prune && strlen(previous_head) != 0) {
+                status.status = deploying;
+
+                if(deploy.prune && strlen(previous_head) != 0) {
                     char previous_head_path[BUFFER_ONE_KB];
-                    setupPathHash(d, previous_head, previous_head_path, BUFFER_ONE_KB);
+                    setupPathHash(deploy, previous_head, previous_head_path, BUFFER_ONE_KB);
                     cleanDir(previous_head_path);
                 }
             }
         }
 
-        if(!s.latest_commit_check) {
-            s.latest_commit_check = true;
+        if(!status.latest_commit_check) {
+            status.latest_commit_check = true;
             printf("▲ Waiting for next commit\n\n");
         }
-        sleep(d.wait);
+
+        status.status = idle;
+        sleep(deploy.wait);
     }
 
     kill(child_pid, SIGKILL);

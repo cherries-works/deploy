@@ -1,6 +1,23 @@
 #ifndef UTILS_H
 #define UTILS_H
 
+#include "config.h"
+
+typedef struct {
+    int help;
+    char *config;
+} Args;
+
+extern void parseArgs(int argc, char* argv[], Args *args);
+
+extern pid_t initialize(
+    int argc,
+    char *argv[],
+    Deploy *d,
+    Status *s,
+    Args *args
+);
+
 extern void trim(char *buffer);
 extern void cleanDir(char *path);
 extern void clearLine();
