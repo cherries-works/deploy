@@ -3,7 +3,7 @@
 
 #include "config.h"
 
-extern void clone(Deploy d);
-extern void build(Deploy d);
+extern void clone(Deploy d, Status *status);
+extern void build(Deploy d, Status *status);
 
 #endif

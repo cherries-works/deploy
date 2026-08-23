@@ -17,16 +17,17 @@ typedef struct {
 
 extern void parseArgs(int argc, char* argv[], Args *args);
 
-extern pid_t initialize(
-    Deploy *d,
-    Status *s,
-    Args *args
-);
-
 extern void trim(char *buffer);
 extern void cleanDir(char *path);
 extern void clearLine();
 extern void clearLines(unsigned i);
+extern void formatTimeHumanReadable(
+    long unsigned seconds, 
+    char* buffer,
+    size_t size
+);
+extern void formatTime(time_t _time, char *buffer, size_t size);
+extern long unsigned unformatTime(char *buffer);
 
 extern const size_t BUFFER_ONE_KB;
 extern const char SPACE_IN_ASCII;

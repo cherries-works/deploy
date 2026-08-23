@@ -16,19 +16,25 @@ typedef enum {
 
 typedef struct {
     bool started;
-
-    // whether or not we already checked a failed commit
-    bool failed_commit_check;
-
-    // whether or not we already checked for a commit
-    bool latest_commit_check;
+    bool failed_commit_check; // whether or not we already checked a failed commit
+    bool latest_commit_check; // whether or not we already checked for a commit
     
     Status_e status;
+
     pid_t pid;
+    pid_t render_pid;
     char hash[256];
+
+    time_t timer;
+    int8_t previous_terminal_length;
+    
+    int8_t event_index;
+    char events[5][256];
 } Status;
 
 typedef struct {
+    bool exists;
+
     char repo[256];
     char branch[256];
     char name[256];
