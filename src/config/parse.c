@@ -84,9 +84,11 @@ void parseConfig(
     FILE *file = fopen(path, "r");
     if(file == NULL) {
         printf("No config file found. (%s)\n", path);
-        exit(EXIT_FAILURE);
+        d->exists = false;
+        return;
     }
 
+    d->exists = true;
     size_t n = fread(buffer, 1, buffer_size - 1, file);
     buffer[n] = '\0';
 
