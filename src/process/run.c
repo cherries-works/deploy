@@ -43,7 +43,7 @@ pid_t run(Deploy d) {
 
     pid_t pid = fork();
     if (pid < 0) {
-        printf("Error: Forking process failed.\n");
+        // printf("Error: Forking process failed.\n");
         return -1;
     }
 
@@ -65,7 +65,7 @@ pid_t run(Deploy d) {
     int status;
     pid_t r = waitpid(pid, &status, WNOHANG);
     if(r == pid) {
-        printf("Error: Waitpid failed WNOHANG.\n");
+        // printf("Error: Waitpid failed WNOHANG.\n");
         return -1;
     }
 

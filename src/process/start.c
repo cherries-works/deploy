@@ -11,10 +11,10 @@
 
 pid_t start(Deploy d, Status *s) {
     s->status = cloning;
-    clone(d);
+    clone(d, s);
 
     s->status = building;
-    build(d);
+    build(d, s);
     
     s->status = running;
     pid_t pid = run(d);

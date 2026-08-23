@@ -5,6 +5,10 @@
 #include <sys/types.h>
 #include <string.h>
 #include <wait.h>
+#include <termios.h>
+#include <malloc.h>
+#include <sys/mman.h>
+#include <poll.h>
 
 #include "config.h"
 #include "process.h"
@@ -12,119 +16,84 @@
 #include "setup.h"
 #include "render.h"
 
-volatile sig_atomic_t child_pid = -1;
+volatile sig_atomic_t main_pid = -1;
+volatile sig_atomic_t render_pid = -1;
+struct termios oldt;
 void handle_sigint(int sig) {
-    if (child_pid > 0) {
-        stop(child_pid);
+    if (main_pid > 0) {
+        stop(main_pid);
     }
-
+    if (render_pid > 0) {
+        stop(render_pid);
+    }
+    tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
     _exit(0);
 }
 
+struct pollfd pfd = {
+    .fd = STDIN_FILENO,
+    .events = POLLIN
+};
+
 int runner(Args args) {
     signal(SIGINT, handle_sigint);
+    tcgetattr(STDIN_FILENO, &oldt);
 
-    Status status = {};
-    Deploy deploy = {};
-    render(status);
-
-    child_pid = initialize(
-        &deploy,
-        &status,
-        &args
+    Status *status = mmap(
+        NULL,
+        sizeof(Status),
+        PROT_READ | PROT_WRITE,
+        MAP_SHARED | MAP_ANONYMOUS,
+        -1,
+        0
     );
 
-    char previous_head[BUFFER_ONE_KB];
-    char head[BUFFER_ONE_KB];
-
-    status.status = waiting;
-
-    while(true) {
-        int pid_status;
-        pid_t r = waitpid(child_pid, &pid_status, WNOHANG);
-
-        if (r == child_pid) {
-            status.latest_commit_check = false;
-            status.failed_commit_check = false;
-            if (WIFEXITED(pid_status)) {
-                printf("× Application exited (exited)\n");
-            } else if (WIFSIGNALED(pid_status)) {
-                printf("× Application terminated (terminated)\n");
-            } else {
-                printf("× Application failed (restarting)\n");
-            }
-
-            printf("▲ Restarting\n");
-            status.status = building;
-
-            child_pid = restart(deploy, &status);
-            if(child_pid == -1) {
-                printf("× Application failed (exited)\n");
-                exit(EXIT_FAILURE);
-            }
-            printf("✓ Application restarted (pid %d)\n\n", child_pid);
-            status.status = idle;
-        }
-
-        parseHead(deploy, head);
-        if(strcmp(deploy.head, head) != 0 && deploy.upgrade) {
-            if(strcmp(deploy.failed_head, head) == false) {
-                if(status.failed_commit_check == false) {
-                    status.failed_commit_check = true;
-                }
-            } else {
-                status.status = building;
-
-                status.latest_commit_check = false;
-                printf("▲ New commit detected\n");
-                printf("▲ Updating program\n");
-
-                if(strlen(deploy.previous_head) > 0) {
-                    strcpy(previous_head, deploy.previous_head);
-                }
-
-                strcpy(deploy.previous_head, deploy.head);
-                strcpy(deploy.head, head);
-
-                stop(child_pid);
-
-                printf("▲ Stopped application (pid %d)\n\n", child_pid);
-                child_pid = restart(deploy, &status);
-
-                if(child_pid == -1) {
-                    printf("× Application failed (rolling back)\n\n");
-
-                    child_pid = rollback(&deploy, deploy.previous_head);
-                    if(child_pid == -1) {
-                        printf("× Application failed (exited)\n");
-                        exit(EXIT_FAILURE);
-                    } else {
-                        status.status = deploying;
-                        printf("✓ Rollback completed\n");
-                    }
-                }
-
-                status.failed_commit_check = false;
-                printf("✓ Application running (pid %d)\n\n", child_pid);
-                status.status = deploying;
-
-                if(deploy.prune && strlen(previous_head) != 0) {
-                    char previous_head_path[BUFFER_ONE_KB];
-                    setupPathHash(deploy, previous_head, previous_head_path, BUFFER_ONE_KB);
-                    cleanDir(previous_head_path);
-                }
-            }
-        }
-
-        if(!status.latest_commit_check) {
-            status.latest_commit_check = true;
-            printf("▲ Waiting for next commit\n\n");
-        }
-
-        status.status = idle;
-        sleep(deploy.wait);
+    render(status);
+    render_pid = status->render_pid;
+    if(render_pid == -1) {
+        exit(EXIT_FAILURE);
     }
 
-    stop(child_pid);
+    main_pid = initialize(
+        status,
+        &args
+    );
+    if(main_pid == -1) {
+        stop(render_pid);
+        exit(EXIT_FAILURE);
+    }
+
+    struct termios newt;
+    newt = oldt;
+    newt.c_lflag &= (tcflag_t)~(ICANON | ECHO);
+    tcsetattr(STDIN_FILENO, TCSANOW, &newt);
+    while (true) {
+        int ret = poll(&pfd, 1, 1000);
+        if (ret < 0) break;
+
+        if (ret > 0 && (pfd.revents & POLLIN)) {
+            char c;
+
+            if (read(STDIN_FILENO, &c, 1) == 1) {
+                if (c == 'q') {
+                    break;
+                }
+
+                if (c == 'd') {
+                    stop(status->render_pid);
+                    tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
+                    return 0;
+                }
+            }
+        }
+    }
+    
+
+    stop(main_pid);
+    stop(status->render_pid);
+    stop(status->pid);
+    munmap(status, sizeof(Status));
+    tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
+
     return 0;
 }
