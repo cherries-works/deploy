@@ -34,7 +34,7 @@ void render(Status *s) {
             clearLines((unsigned)s->previous_terminal_length);
 
             s->previous_terminal_length = 0;
-            printf("%s%sCherries Deploy%s ──────────────────────────── v0.1.0 ──────┐\n", BOLD, RED, RESET);
+            printf("%s%sCherries Deploy%s ──────────────────────────── v0.2.0 ──────┐\n", BOLD, RED, RESET);
             printf("Press 'd' to detach | Press 'q' to quit\n\n");
             
             s->previous_terminal_length += 3;
