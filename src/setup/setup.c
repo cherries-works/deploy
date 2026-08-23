@@ -129,7 +129,7 @@ void setupPathHash(
 void setupDeploy(Deploy *d) {
     char *home = getenv("HOME");
     if(home == NULL) {
-        printf("Error: No HOME enviroment variable...");
+        // printf("Error: No HOME enviroment variable...");
         return;
     }
 
