@@ -11,8 +11,9 @@
 
 #include "config.h"
 #include "utils.h"
+#include "process.h"
 
-void clone(Deploy d) {
+void clone(Deploy d, Status *status) {
     char *home = getenv("HOME");
     if(home == NULL) {
         printf("Error: No HOME enviroment variable...");
@@ -38,7 +39,7 @@ void clone(Deploy d) {
         dir = opendir(secondPath);
         if(dir) {
             closedir(dir);
-            printf("✓ Repository ready\n");
+            eventAppend(status, "+ Repository ready");
             return;
         }
     } else {
@@ -81,6 +82,6 @@ void clone(Deploy d) {
     );
     system(buffer);
 
-    printf("✓ Repository cloned\n");
+    eventAppend(status, "+ Repository cloned");
     return;
 }

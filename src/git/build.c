@@ -4,8 +4,9 @@
 #include "git.h"
 #include "config.h"
 #include "utils.h"
+#include "process.h"
 
-void build(Deploy d) {
+void build(Deploy d, Status *status) {
     char buffer[BUFFER_ONE_KB];
     snprintf(
         buffer,
@@ -20,6 +21,7 @@ void build(Deploy d) {
     );
 
     system(buffer);
-    printf("✓ Build completed\n");
+
+    eventAppend(status, "+ Build completed");
     return;
 }
