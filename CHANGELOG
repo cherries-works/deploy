@@ -1,3 +1,12 @@
+v0.2.0 (23rd August 2026)
+- Changed configs
+- Made shared memory
+- Renderer, main process, and deployed process all in separate processes
+- Running processes are being stored (pids)
+- Rendering was improved
+- Symbols got removed
+- Internal cleanup (still many bugs)
+
 v0.1.0 (18th June 2026)
 - Config file parsing
 - Auto build & run
