@@ -88,7 +88,6 @@ int runner(Args args) {
         }
     }
     
-
     stop(main_pid);
     stop(status->render_pid);
     stop(status->pid);
