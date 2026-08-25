@@ -12,5 +12,4 @@ void parseCommand(
     Args args
 );
 
-
 #endif
