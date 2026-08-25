@@ -9,12 +9,14 @@
 #include <malloc.h>
 #include <sys/mman.h>
 #include <poll.h>
+#include <fcntl.h>
 
 #include "config.h"
 #include "process.h"
 #include "utils.h"
 #include "setup.h"
 #include "render.h"
+#include "log.h"
 
 volatile sig_atomic_t main_pid = -1;
 volatile sig_atomic_t render_pid = -1;
@@ -39,27 +41,35 @@ int runner(Args args) {
     signal(SIGINT, handle_sigint);
     tcgetattr(STDIN_FILENO, &oldt);
 
-    Status *status = mmap(
-        NULL,
-        sizeof(Status),
-        PROT_READ | PROT_WRITE,
-        MAP_SHARED | MAP_ANONYMOUS,
-        -1,
-        0
-    );
+    shm_unlink(CHERRIES_DEPLOY_SHM);
+    int shm_fd = shm_open(CHERRIES_DEPLOY_SHM, O_CREAT | O_EXCL | O_RDWR, 0600);
+    if (shm_fd == -1) {
+        exit(EXIT_FAILURE);
+    }
 
-    render(status);
-    render_pid = status->render_pid;
-    if(render_pid == -1) {
+    struct shmbuf *shmp;
+    shmp = mmap(NULL, sizeof(*shmp), PROT_READ | PROT_WRITE, MAP_SHARED, shm_fd, 0);
+    if (shmp == MAP_FAILED) {
+        _log(
+            L_ERROR,
+            "Mapping object failed"
+        );
         exit(EXIT_FAILURE);
     }
 
     main_pid = initialize(
-        status,
+        &shmp->status,
         &args
     );
+
     if(main_pid == -1) {
         stop(render_pid);
+        exit(EXIT_FAILURE);
+    }
+
+    render(&shmp->status);
+    render_pid = shmp->status.render_pid;
+    if(render_pid == -1) {
         exit(EXIT_FAILURE);
     }
 
@@ -80,7 +90,7 @@ int runner(Args args) {
                 }
 
                 if (c == 'd') {
-                    stop(status->render_pid);
+                    stop(shmp->status.render_pid);
                     tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
                     return 0;
                 }
@@ -89,9 +99,9 @@ int runner(Args args) {
     }
     
     stop(main_pid);
-    stop(status->render_pid);
-    stop(status->pid);
-    munmap(status, sizeof(Status));
+    stop(shmp->status.render_pid);
+    stop(shmp->status.pid);
+    shm_unlink(CHERRIES_DEPLOY_SHM);
     tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
 
     return 0;

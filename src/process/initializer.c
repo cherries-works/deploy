@@ -6,13 +6,16 @@
 #include <string.h>
 #include <wait.h>
 #include <termios.h>
+#include <malloc.h>
+#include <sys/mman.h>
+#include <poll.h>
 
 #include "config.h"
 #include "process.h"
 #include "utils.h"
 #include "setup.h"
 #include "render.h"
-
+#include "log.h"
 
 pid_t startProgram(
     Deploy *deploy,
@@ -49,19 +52,21 @@ pid_t initialize(
     if(main_pid == -1) return -1;
 
     if(main_pid == 0) {
+        _log(L_INFO, "Setting up Deploy.");
+
         pid_t program_pid = startProgram(&deploy, status, args);
         if(program_pid == -1) return -1;
         
         char previous_head[BUFFER_ONE_KB];
         char head[BUFFER_ONE_KB];
-    
+
         status->status = waiting;
         char message[64];
         while(true) {
             int pid_status;
             pid_t r = waitpid(program_pid, &pid_status, WNOHANG);
             strcpy(status->hash, deploy.head);
-    
+
             if (r == program_pid) {
                 status->latest_commit_check = false;
                 status->failed_commit_check = false;
@@ -72,21 +77,21 @@ pid_t initialize(
                 } else {
                     eventAppend(status, "x Application failed (restarting)\n");
                 }
-    
+
                 eventAppend(status, "^ Restarting\n");
                 status->status = building;
-    
+
                 program_pid = restart(deploy, status);
                 if(program_pid == -1) {
                     eventAppend(status, "x Application failed (exited)\n");
                     exit(EXIT_FAILURE);
                 }
-    
+
                 snprintf(message, sizeof(message), "+ Application restarted (pid %d)", program_pid);
                 eventAppend(status, message);
                 status->status = idle;
             }
-    
+
             parseHead(deploy, head);
             if(strcmp(deploy.head, head) != 0 && deploy.upgrade) {
                 if(strcmp(deploy.failed_head, head) == false) {

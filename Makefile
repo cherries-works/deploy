@@ -14,10 +14,11 @@ git = src/git/build.c src/git/clone.c
 process = src/process/run.c src/process/restart.c src/process/start.c src/process/rollback.c src/process/stop.c src/process/event.c src/process/initializer.c
 utils = src/utils/constants.c src/utils/strings.c src/utils/dir.c src/utils/terminal.c src/utils/args.c src/utils/format.c
 setup = src/setup/setup.c
+log = src/log/start.c
 commands = src/commands/center.c src/commands/help.c src/commands/runner.c src/commands/ls.c src/commands/stop.c
 render = src/render/render.c src/render/utils.c
 
-src = $(config) $(git) $(process) $(utils) $(setup) $(render) $(commands) $(main)
+src = $(config) $(git) $(process) $(utils) $(setup) $(render) $(commands) $(log) $(main)
 
 obj = $(src:%.c=$(build)/%.o)
 dep = $(obj:.o=.d)

@@ -3,6 +3,12 @@
 
 #include "utils.h"
 #include <sys/types.h>
+#include <pthread.h>
+
+struct shmbuf {
+    pthread_mutex_t lock;
+    Status status;
+};
 
 extern pid_t rollback(Deploy *d, char *hash);
 extern pid_t start(Deploy d, Status *s);

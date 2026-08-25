@@ -36,5 +36,6 @@ extern const char* CHERRIES_FOLDER;
 extern const char* CHERRIES_FOLDER_DEPLOY;
 extern const char* R_CHERRIES_FOLDER;
 extern const char* R_CHERRIES_FOLDER_DEPLOY;
+extern const char* CHERRIES_DEPLOY_SHM;
 
 #endif
