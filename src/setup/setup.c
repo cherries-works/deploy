@@ -77,6 +77,21 @@ void setup() {
     } else {
         closedir(dir);
     }
+
+    snprintf(
+        path,
+        BUFFER_ONE_KB,
+        "%s/%s/logs",
+        home,
+        R_CHERRIES_FOLDER_DEPLOY
+    );
+    
+    dir = opendir(path);
+    if(!dir) {
+        mkdir(path, 0755);
+    } else {
+        closedir(dir);
+    }
 }
 
 void setupPath(
