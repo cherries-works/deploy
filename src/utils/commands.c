@@ -8,7 +8,7 @@
 #include "process.h"
 
 void help() {
-    printf("%s%sCherries Deploy%s ───────────────────────────────────── v0.2.0 ──── \n", BOLD, RED, RESET);
+    printf("%s%sCherries Deploy%s ───────────────────────────────────── v0.2.1 ──── \n", BOLD, RED, RESET);
     printf(" > %-20s %-20s\n", "run", "Runs a deplyment (default option).");
     printf("     %s%-20s %-20s%s\n", DIM, "--config [path]", "Specify the location of config file.", RESET);
     printf(" > %-20s %-20s\n", "stop", "Stops all running processes by Deploy.");

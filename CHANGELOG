@@ -1,3 +1,9 @@
+v0.2.1 (27th August 2026)
+- Using SHM
+- Memory leaks somewhat fixed
+- Re-Structuring
+- Internal cleanup
+
 v0.2.0 (23rd August 2026)
 - Changed configs
 - Made shared memory

@@ -54,7 +54,7 @@ void render() {
             clearLines((unsigned)shmp->status.previous_terminal_length);
 
             shmp->status.previous_terminal_length = 0;
-            printf("%s%sCherries Deploy%s ──────────────────────────── v0.2.0 ──────┐\n", BOLD, RED, RESET);
+            printf("%s%sCherries Deploy%s ──────────────────────────── v0.2.1 ──────┐\n", BOLD, RED, RESET);
             printf("Press 'd' to detach | Press 'q' to quit\n\n");
             
             shmp->status.previous_terminal_length += 3;
