@@ -16,6 +16,9 @@ typedef struct {
 } Args;
 
 extern void parseArgs(int argc, char* argv[], Args *args);
+extern void help();
+extern void list();
+extern void stopAll();
 
 extern void trim(char *buffer);
 extern void cleanDir(char *path);
