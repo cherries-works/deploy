@@ -78,7 +78,6 @@ void parseConfig(
     d->upgrade = true;
     d->wait = 60;
 
-
     size_t buffer_size = BUFFER_ONE_KB;
     char buffer[buffer_size];
     FILE *file = fopen(path, "r");
