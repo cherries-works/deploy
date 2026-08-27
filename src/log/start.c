@@ -15,11 +15,11 @@ void setupLog() {
     }
 
     char current_file[BUFFER_ONE_KB];
-    snprintf(current_file, BUFFER_ONE_KB, "%s/%s/state/log", home, R_CHERRIES_FOLDER_DEPLOY);
+    snprintf(current_file, BUFFER_ONE_KB, "%s/%s/log", home, R_CHERRIES_FOLDER_DEPLOY);
     if(access(current_file, F_OK) == 0) {
         _log(
             L_INFO,
-            "Logging initted."
+            "Logging was already initted."
         );
         return;
     }
@@ -69,7 +69,7 @@ time_t getCurrentLog() {
     }
 
     char path_file[BUFFER_ONE_KB];
-    snprintf(path_file, BUFFER_ONE_KB, "%s/%s/state/log", home, R_CHERRIES_FOLDER_DEPLOY);
+    snprintf(path_file, BUFFER_ONE_KB, "%s/%s/log", home, R_CHERRIES_FOLDER_DEPLOY);
     FILE *f = fopen(path_file, "r");
     if(f == NULL) return 0;
 
