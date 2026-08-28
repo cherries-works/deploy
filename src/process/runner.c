@@ -64,15 +64,19 @@ void runner(Args args) {
     }
 
     main_pid = initialize(&args);
-
     if(main_pid == -1) {
-        stop(render_pid);
+        if(shmp->status.pid != -1) {
+            stop(shmp->status.pid);
+        }
+        shm_unlink(CHERRIES_DEPLOY_SHM);
         exit(EXIT_FAILURE);
     }
 
-    render();
-    render_pid = shmp->status.render_pid;
+    render_pid = render();
     if(render_pid == -1) {
+        stop(main_pid);
+        stop(shmp->status.pid);
+        shm_unlink(CHERRIES_DEPLOY_SHM);
         exit(EXIT_FAILURE);
     }
 

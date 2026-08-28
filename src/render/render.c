@@ -25,11 +25,11 @@ const char* status_list[] = {
     "deploying"
 };
 
-void render() {
+pid_t render() {
     pid_t pid = fork();
     if (pid < 0) {
         printf("Error: Forking renderer failed.\n");
-        return;
+        return -1;
     }
 
     
@@ -83,4 +83,6 @@ void render() {
             sleep(1);
         }
     }
+
+    return pid;
 }

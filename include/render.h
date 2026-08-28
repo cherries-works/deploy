@@ -30,6 +30,6 @@ extern char *TEN_BARS;
 extern char *getBars(float value);
 extern char* getColor(float value);
 
-extern void render();
+extern pid_t render();
 
 #endif
