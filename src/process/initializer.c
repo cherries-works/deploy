@@ -69,10 +69,11 @@ pid_t initialize(Args *args) {
 
         pid_t program_pid = startProgram(&deploy, &shmp->status, args);
         if(program_pid == -1) {
+            shmp->status.pid = -1;
             _log(L_ERROR, "Failed to run Application.");
             exit(EXIT_FAILURE);
         }
-        
+
         char previous_head[BUFFER_ONE_KB];
         char head[BUFFER_ONE_KB];
 

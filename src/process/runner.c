@@ -41,12 +41,12 @@ void runner(Args args) {
     signal(SIGINT, handle_sigint);
     tcgetattr(STDIN_FILENO, &oldt);
 
-    FILE *file = fopen(args.config, "r");
-    if(file == NULL) {
-        printf("No config file found. (%s)\n", args.config);
-        exit(EXIT_FAILURE);
-        return;
-    }
+    // FILE *file = fopen(args.config, "r");
+    // if(file == NULL) {
+    //     printf("No config file found. (%s)\n", args.config);
+    //     exit(EXIT_FAILURE);
+    //     return;
+    // }
 
     shm_unlink(CHERRIES_DEPLOY_SHM);
     int shm_fd = shm_open(CHERRIES_DEPLOY_SHM, O_CREAT | O_EXCL | O_RDWR, 0600);
@@ -64,18 +64,24 @@ void runner(Args args) {
     }
 
     main_pid = initialize(&args);
+    sleep(1);
     if(main_pid == -1 || shmp->status.pid == -1) {
+        _log(L_ERROR, "Exiting in main.");
+
         if(shmp->status.pid != -1) {
             stop(shmp->status.pid);
         }
+        failureLog();
         shm_unlink(CHERRIES_DEPLOY_SHM);
         exit(EXIT_FAILURE);
     }
 
     render_pid = render();
     if(render_pid == -1) {
+        _log(L_ERROR, "Exiting in render.");
         stop(main_pid);
         stop(shmp->status.pid);
+        failureLog();
         shm_unlink(CHERRIES_DEPLOY_SHM);
         exit(EXIT_FAILURE);
     }
@@ -86,6 +92,10 @@ void runner(Args args) {
     tcsetattr(STDIN_FILENO, TCSANOW, &newt);
 
     while (true) {
+        if(shmp->status.pid == -1) {
+            _log(L_ERROR, "Runner failed.");
+            break;
+        }
         int ret = poll(&pfd, 1, 1000);
         if (ret < 0) break;
 
@@ -98,19 +108,20 @@ void runner(Args args) {
                 }
 
                 if (c == 'd') {
-                    stop(shmp->status.render_pid);
+                    stop(render_pid);
                     tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
                     return;
                 }
             }
         }
     }
-    
+
     stop(main_pid);
-    stop(shmp->status.render_pid);
+    stop(render_pid);
     stop(shmp->status.pid);
     shm_unlink(CHERRIES_DEPLOY_SHM);
     tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
+    failureLog();
 
     return;
 }

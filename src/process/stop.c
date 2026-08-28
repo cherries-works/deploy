@@ -11,6 +11,8 @@
 #include "utils.h"
 
 void stop(pid_t pid) {
+    if(pid < 0) return;
+
     kill(pid, SIGKILL);
     waitpid(pid, NULL, 0);
 

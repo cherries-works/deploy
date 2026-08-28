@@ -32,7 +32,6 @@ pid_t render() {
         return -1;
     }
 
-    
     if(pid == 0) {
         int shm_fd = shm_open(CHERRIES_DEPLOY_SHM, O_RDWR, 0600);
         if (shm_fd == -1) {
