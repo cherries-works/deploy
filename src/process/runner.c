@@ -41,12 +41,12 @@ void runner(Args args) {
     signal(SIGINT, handle_sigint);
     tcgetattr(STDIN_FILENO, &oldt);
 
-    // FILE *file = fopen(args.config, "r");
-    // if(file == NULL) {
-    //     printf("No config file found. (%s)\n", args.config);
-    //     exit(EXIT_FAILURE);
-    //     return;
-    // }
+    FILE *file = fopen(args.config, "r");
+    if(file == NULL) {
+        printf("No config file found. (%s)\n", args.config);
+        exit(EXIT_FAILURE);
+        return;
+    }
 
     shm_unlink(CHERRIES_DEPLOY_SHM);
     int shm_fd = shm_open(CHERRIES_DEPLOY_SHM, O_CREAT | O_EXCL | O_RDWR, 0600);
@@ -68,9 +68,7 @@ void runner(Args args) {
     if(main_pid == -1 || shmp->status.pid == -1) {
         _log(L_ERROR, "Exiting in main.");
 
-        if(shmp->status.pid != -1) {
-            stop(shmp->status.pid);
-        }
+        stop(shmp->status.pid);
         failureLog();
         shm_unlink(CHERRIES_DEPLOY_SHM);
         exit(EXIT_FAILURE);
