@@ -98,6 +98,10 @@ void failureLog() {
     char path_file[BUFFER_ONE_KB];
     snprintf(path_file, BUFFER_ONE_KB, "%s/%s/logs/%s.log", home, R_CHERRIES_FOLDER_DEPLOY, log_time_buffer);
 
+    char current_file[BUFFER_ONE_KB];
+    snprintf(current_file, BUFFER_ONE_KB, "%s/%s/log", home, R_CHERRIES_FOLDER_DEPLOY);
+    remove(current_file);
+
     printf("Exited :: %s\n", path_file);
 }
 
