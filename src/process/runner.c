@@ -64,7 +64,7 @@ void runner(Args args) {
     }
 
     main_pid = initialize(&args);
-    if(main_pid == -1) {
+    if(main_pid == -1 || shmp->status.pid == -1) {
         if(shmp->status.pid != -1) {
             stop(shmp->status.pid);
         }
